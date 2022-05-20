@@ -641,8 +641,8 @@ EndIf
 
       SplashOff ()
 
-      If RegRead ("HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\VBoxDRV", "DisplayName") <> "VirtualBox Service" Then
-        RunWait ("cmd /c sc create VBoxDRV binpath= ""%CD%\"& $arch &"\drivers\VBoxDrv\VBoxDrv.sys"" type= kernel start= auto error= normal displayname= PortableVBoxDRV", @ScriptDir, @SW_HIDE)
+      If RegRead ("HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\VBoxSup", "DisplayName") <> "VirtualBox Service" Then
+        RunWait ("cmd /c sc create VBoxSup binpath= ""%CD%\"& $arch &"\drivers\VBoxSup\VBoxSup.sys"" type= kernel start= auto error= normal displayname= PortableVBoxSup", @ScriptDir, @SW_HIDE)
         Local $DRV = 1
       Else
         Local $DRV = 0
@@ -711,7 +711,7 @@ EndIf
       EndIf
 
       If $DRV = 1 Then
-        RunWait ("sc start VBoxDRV", @ScriptDir, @SW_HIDE)
+        RunWait ("sc start VBoxSup", @ScriptDir, @SW_HIDE)
       EndIf
 
       If $USB = 1 Then
@@ -783,7 +783,7 @@ EndIf
       RunWait (@SystemDir&"\regsvr32.exe /S /U "& $arch &"\VBoxC.dll", @ScriptDir, @SW_HIDE)
 
       If $DRV = 1 Then
-        RunWait ("sc stop VBoxDRV", @ScriptDir, @SW_HIDE)
+        RunWait ("sc stop VBoxSup", @ScriptDir, @SW_HIDE)
       EndIf
 
       If $USB = 1 Then
@@ -845,7 +845,7 @@ EndIf
       EndIf
 
       If $DRV = 1 Then
-        RunWait ("sc delete VBoxDRV", @ScriptDir, @SW_HIDE)
+        RunWait ("sc delete VBoxSup", @ScriptDir, @SW_HIDE)
       EndIf
 
       If $USB = 1 Then
