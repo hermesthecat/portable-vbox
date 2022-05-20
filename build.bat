@@ -182,7 +182,7 @@ pushd %build_folder%
 popd
 
 rem Change the icon on the self-extracting archive.
-"%reshack%" -addoverwrite "%release_folder%\Portable-VirtualBox.tmp", "%release_folder%\%output_name%", "%build_folder%\Portable-VirtualBox\source\VirtualBox.ico",ICONGROUP,1,1033
+"%reshack%" -open "%release_folder%\Portable-VirtualBox.tmp" -save "%release_folder%%output_name%" -action addoverwrite -res "%build_folder%\Portable-VirtualBox\source\VirtualBox.ico" -mask ICONGROUP,1,1033
 
 del /q "%release_folder%\Portable-VirtualBox.tmp"
 
