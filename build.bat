@@ -29,6 +29,12 @@ IF DEFINED aut2exe (
 )
 
 rem Try to find the aut2exe path.
+set "PPATH=%ProgramFiles(x86)%\AutoIt3\Aut2Exe\Aut2exe_x64.exe"
+IF exist "%PPATH%" (
+    set "aut2exe=%PPATH%"
+	goto done_aut2exe
+) 
+
 set "PPATH=%ProgramFiles%\AutoIt3\Aut2Exe\aut2exe.exe"
 IF exist "%PPATH%" (
     set "aut2exe=%PPATH%"
@@ -164,7 +170,7 @@ xcopy "%input_folder%LiesMich.txt" "%build_folder%\Portable-VirtualBox\"
 xcopy "%input_folder%ReadMe.txt"  "%build_folder%\Portable-VirtualBox\"
 
 rem Compile Portable-VirtualBox.
-"%aut2exe%" /in "%build_folder%\Portable-VirtualBox\source\Portable-VirtualBox.au3" /out "%build_folder%\Portable-VirtualBox\Portable-VirtualBox.exe" /icon "%build_folder%\Portable-VirtualBox\source\VirtualBox.ico" /x86
+"%aut2exe%" /in "%build_folder%\Portable-VirtualBox\source\Portable-VirtualBox.au3" /out "%build_folder%\Portable-VirtualBox\Portable-VirtualBox.exe" /icon "%build_folder%\Portable-VirtualBox\source\VirtualBox.ico"
 if not exist "%build_folder%\Portable-VirtualBox\Portable-VirtualBox.exe" (
 	echo Failed to build exe. No .exe file was produced
 	EXIT /B
