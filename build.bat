@@ -182,9 +182,9 @@ IF "%~1"=="-s" (
 	"%signtool%" sign /a "%build_folder%\Portable-VirtualBox\Portable-VirtualBox.exe"
 )
 
-rem Make a release by packing the exe, data and source code into a self-extracting archive.
+rem Make a release by packing the exe and data into a self-extracting archive.
 pushd %build_folder%
-"%sevenzip%" a -r -x!.git -sfx7z.sfx "%release_folder%\Portable-VirtualBox.tmp" "Portable-VirtualBox"
+"%sevenzip%" a -r -x!.git -x!source -sfx7z.sfx "%release_folder%\Portable-VirtualBox.tmp" "Portable-VirtualBox"
 popd
 
 rem Change the icon on the self-extracting archive.
