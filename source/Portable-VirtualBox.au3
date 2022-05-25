@@ -769,6 +769,10 @@ EndIf
         ProcessWaitClose ("VBoxManage.exe")
       EndIf
 
+      ;~ check if process "VirtualBoxVM.exe" exists before exiting
+      While 1
+        If Not ProcessExists ("VirtualBoxVM.exe") Then ExitLoop
+      WEnd
       SplashTextOn ("Portable-VirtualBox", IniRead ($var2 & $lng &".ini", "messages", "07", "NotFound"), 220, 40, -1, -1, 1, "arial", 12)
 
       ProcessWaitClose ("VBoxSVC.exe")
