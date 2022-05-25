@@ -21,9 +21,16 @@
 #include <ProcessConstants.au3>
 #include <String.au3>
 #include <WinAPIError.au3>
+#include <Misc.au3>
 
 #NoTrayIcon
 #RequireAdmin
+
+;~ Enforce running in singleton
+If _Singleton("PORTABLE-VIRTUALBOX", 1) = 0 Then
+  MsgBox($MB_SYSTEMMODAL, "Warning", "Program is running")
+  Exit
+EndIf
 
 Opt ("GUIOnEventMode", 1)
 Opt ("TrayAutoPause", 0)
