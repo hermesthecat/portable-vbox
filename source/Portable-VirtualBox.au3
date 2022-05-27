@@ -49,6 +49,7 @@ Global $pwd = @ScriptDir
 Global $updateUrl = IniRead (@ScriptDir&"\data\settings\vboxinstall.ini", "download", "update", "NotFound")
 
 Global $new1 = 0, $new2 = 0
+Global $bShowSettingsWindow = True;
 
 If FileExists (@ScriptDir&"\update.exe") Then
   Sleep (2000)
@@ -910,6 +911,14 @@ Func HideWindows ()
 EndFunc
 
 Func Settings ()
+  ;~ Toggle show Settings window
+  If $bShowSettingsWindow = False Then
+    ExitGUI()
+    Return
+  Elseif $bShowSettingsWindow = True Then
+    $bShowSettingsWindow = False;
+  EndIf
+
   Opt ("GUIOnEventMode", 1)
 
   Global $Radio1, $Radio2, $Radio3, $Radio4, $Radio5, $Radio6, $Radio7, $Radio8, $Radio9, $Radio10, $Radio11, $Radio12, $Radio13, $Radio14
@@ -1501,6 +1510,9 @@ EndFunc
 
 Func ExitGUI ()
   GUIDelete ()
+  If $bShowSettingsWindow = False Then
+    $bShowSettingsWindow = True;
+  EndIf
   $cl = 0
 EndFunc
 
