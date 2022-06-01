@@ -738,37 +738,33 @@ EndIf
         RunWait ("sc start VBoxNetFlt", @ScriptDir, @SW_HIDE)
       EndIf
 
-      If $CmdLine[0] = 1 Then
-        If FileExists (@ScriptDir&"\data\.VirtualBox") Then
-          Local $UserHome = IniRead ($var1, "userhome", "key", "NotFound")
-          Local $StartVM  = $CmdLine[1]
-          If IniRead ($var1, "userhome", "key", "NotFound") = "%CD%\data\.VirtualBox" AND FileExists (@ScriptDir&"\data\.VirtualBox\HardDisks\"&$CmdLine[1]&".vdi") Then
-            RunWait ("cmd /c set VBOX_USER_HOME="& $UserHome &"& .\"& $arch &"\VBoxManage.exe startvm """& $StartVM &"""" , @ScriptDir, @SW_HIDE)
-          Else
-            RunWait ("cmd /c set VBOX_USER_HOME="& $UserHome &"& .\"& $arch &"\VirtualBox.exe", @ScriptDir, @SW_HIDE)
-          EndIf
-        Else
-          RunWait ("cmd /c set VBOX_USER_HOME=%CD%\data\.VirtualBox & .\"& $arch &"\VirtualBox.exe", @ScriptDir, @SW_HIDE)
-        EndIf
-
-        ProcessWaitClose ("VirtualBox.exe")
-        ProcessWaitClose ("VBoxManage.exe")
-      Else
-        If FileExists (@ScriptDir&"\data\.VirtualBox") Then
-          Local $UserHome = IniRead ($var1, "userhome", "key", "NotFound")
-          Local $StartVM  = IniRead ($var1, "startvm", "key", "NotFound")
-          If IniRead ($var1, "startvm", "key", "NotFound") = true Then
-            RunWait ("cmd /C set VBOX_USER_HOME="& $UserHome &"& .\"& $arch &"\VBoxManage.exe startvm """& $StartVM &"""" , @ScriptDir, @SW_HIDE)
-          Else
-            RunWait ("cmd /c set VBOX_USER_HOME="& $UserHome &"& .\"& $arch &"\VirtualBox.exe", @ScriptDir, @SW_HIDE)
-          EndIf
-        Else
-          RunWait ("cmd /c set VBOX_USER_HOME=%CD%\data\.VirtualBox & .\"& $arch &"\VirtualBox.exe", @ScriptDir, @SW_HIDE)
-        EndIf
-
-        ProcessWaitClose ("VirtualBox.exe")
-        ProcessWaitClose ("VBoxManage.exe")
+      ;~ start VirtualBox
+      ;~ write userhome to config if not exists
+      If Not IniRead($var1, "userhome", "key", "NotFound") Then
+        IniWrite ($var1, "userhome", "key", "%CD%\data\.VirtualBox")
       EndIf
+
+      Local $UserHome = IniRead ($var1, "userhome", "key", "NotFound")
+      ;~ get userhome absolute path
+      Local $userHomeAbsolutePath = GetAbsolutePath($UserHome)
+      ;~ create userhome dir if not exists
+      If Not FileExists($userHomeAbsolutePath) Then
+        DirCreate($userHomeAbsolutePath)
+      EndIf
+
+      ;~ if start with arg, check if directed virtual machine exists
+      If $CmdLine[0] = 1 And FileExists($userHomeAbsolutePath&"\Machines\"&$CmdLine[1]&"\"&$CmdLine[1]&".vbox") Then
+        RunWait ("cmd /c set VBOX_USER_HOME="& $UserHome &"& .\"& $arch &"\VBoxManage.exe startvm """& $CmdLine[1] &"""" , @ScriptDir, @SW_HIDE)
+      ;~ else check if targetvm in config directed and existss
+      ElseIf IniRead($var1, "startvm", "key", "") Then
+        Local $startVM = IniRead($var1, "startvm", "key", "")
+        RunWait ("cmd /c set VBOX_USER_HOME="& $UserHome &"& .\"& $arch &"\VBoxManage.exe startvm """& $StartVM &"""" , @ScriptDir, @SW_HIDE)
+      Else
+        RunWait ("cmd /c set VBOX_USER_HOME="& $UserHome &"& .\"& $arch &"\VirtualBox.exe", @ScriptDir, @SW_HIDE)
+      EndIf
+
+      ProcessWaitClose ("VirtualBox.exe")
+      ProcessWaitClose ("VBoxManage.exe")
 
       ;~ check if process "VirtualBoxVM.exe" exists before exiting
       While 1
@@ -1853,6 +1849,23 @@ EndFunc
 Func UpdateNo ()
   GUIDelete ()
   $update = 0
+EndFunc
+
+;~ Get absolute path
+Func GetAbsolutePath ($sourcePath)
+    Local $iPID = Run('cmd /c set /p s='& $sourcePath &'<nul', '', @SW_HIDE, 2); $STDOUT_CHILD
+  If @error Or Not $iPID Then
+    MsgBox($MB_SYSTEMMODAL, "ERROR", "Get userhome path failed.")
+    Exit
+  EndIf
+
+  Local $absolutePath = ""
+  Do
+      Sleep(10)
+      $absolutePath &= StdoutRead($iPID)
+  Until @error
+
+  Return $absolutePath
 EndFunc
 
 ; Check if virtualbox is installed and run from it
