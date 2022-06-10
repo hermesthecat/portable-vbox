@@ -766,9 +766,10 @@ EndIf
       ProcessWaitClose ("VirtualBox.exe")
       ProcessWaitClose ("VBoxManage.exe")
 
-      ;~ check if process "VirtualBoxVM.exe" exists before exiting
+      ;~ check if virtualbox jobs running before exiting
       While 1
-        If Not ProcessExists ("VirtualBoxVM.exe") Then ExitLoop
+        If  Not ProcessExists("VirtualBox.exe") And Not ProcessExists ("VirtualBoxVM.exe") And Not ProcessExists("VBoxHeadless.exe") Then ExitLoop
+        Sleep(20)
       WEnd
       SplashTextOn ("Portable-VirtualBox", IniRead ($var2 & $lng &".ini", "messages", "07", "NotFound"), 220, 40, -1, -1, 1, "arial", 12)
 
